@@ -1,0 +1,51 @@
+#!/bin/bash
+echo -e "\n\nWelcome to Self User Administration Tool"
+echo -e "\nPlease select the  area of administration you would like to proceed\n"
+
+echo -e "1.       Change Password"
+echo -e "2.       See the disk space"
+echo -e "3.       Login to other box using ssh"
+echo -e "4.       Show all Service running"
+echo -e "5.       Show all ports opened"
+echo -e "6.       Show all java apps running"
+echo -e "7.       Facility to kill a  app"
+echo -e "8.       Exit\n"
+read answer
+case $answer in
+      1)  echo -e "\nPlease enter the username to change password\n"
+read usr
+passwd $usr 
+     ;;
+      2)   echo -e "\nPlease enter the FS for which you would like see the disk usage\n"
+read FS
+df $FS
+     ;;
+      3)        echo -e "\nPlease enter the remote server you would like to login\n"
+read srv
+ssh $srv
+     ;;
+      4)   echo -e "\n below is the list of services running in the system\n"
+cat /etc/services|more
+     ;;
+      5)   echo -e "\n below is the list of open ports running on the server\n"
+netstat -a|more
+     ;;
+      6)    echo -e "\n below is the list of java apps running on the server\n"
+if [[ ` ps -ef|grep -i java|grep -v grep|wc -l` -eq 0 ]]
+then
+echo -e "\nThere are no java apps running on the server\n"
+else
+ps -ef|grep -i java|grep -v grep|more
+fi
+     ;;
+      7)       echo -e "\nPlease enter the app you would like to kill\n"
+read killapp
+ps -ef|grep "$killapp"|grep -v grep|awk '{print $2}'|while read i
+do
+kill -9 $i
+done
+echo -e "\n $killapp has been forcefully killed on the sever\n"
+     ;;
+      8)   break    ;;
+      *)   echo -e "\nbadchoice\n" ;;
+   esac
